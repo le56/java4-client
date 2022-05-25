@@ -1,5 +1,7 @@
 package Controller;
 
+import java.io.IOException;
+
 import View.LoginView;
 import View.MainView;
 import View.RegisterView;
@@ -16,6 +18,7 @@ public class Client {
 	}
 
 	public static void closeView(View viewName) {
+		
 		if (viewName != null) {
 			switch (viewName) {
 			case LOGIN:
@@ -34,10 +37,14 @@ public class Client {
 	
 	public static void sendAccount(String account, String password) {
 		String s1 = account + "," +password;
-		
 		String s2 = EnCryption.enCryption(s1);
-		
-		System.out.println(s2);
+		try {
+			socketHandle.getDaOutputStream().writeUTF("request-login,"+s2);
+			socketHandle.getDaOutputStream().flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void openView(View viewName) {

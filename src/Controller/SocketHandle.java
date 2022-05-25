@@ -2,17 +2,21 @@ package Controller;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import View.MainView;
+
 
 public class SocketHandle {
 
-	private BufferedReader is;
-	private BufferedWriter os;
+	private DataInputStream dataInputStream;
+	private DataOutputStream dataOutputStream;
 
 	private Socket socket;
 
@@ -20,13 +24,13 @@ public class SocketHandle {
 		try {
 			socket = new Socket("localhost", 1234);
 
-			os = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			dataInputStream = new DataInputStream(socket.getInputStream());
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
 			String message;
 
 			while (true) {
-				message = is.readLine();
+				message = dataInputStream.readUTF();
 				if (message.equals("End")) {
 					break;
 				}
@@ -36,8 +40,9 @@ public class SocketHandle {
 				// login-false, id =null, name =null
 				if (mesageSlip[0].equals("login-succses")) {
 					System.out.println("Dang nhap thanh cong");
-					Client.closeView(Client.View.LOGIN);
+					
 					Client.openView(Client.View.MAINVIEW);
+					MainView.lblNewLabel.setText("Xin chao: "+mesageSlip[1]);
 				}
 				if (mesageSlip[0].equals("login-false")) {
 					System.out.println("Dang nhap that bai");
@@ -59,4 +64,11 @@ public class SocketHandle {
 		return socket;
 	}
 
+	public DataInputStream getDataInputStream() {
+		return dataInputStream;
+	}
+
+	public DataOutputStream getDaOutputStream() {
+		return dataOutputStream;
+	}
 }
